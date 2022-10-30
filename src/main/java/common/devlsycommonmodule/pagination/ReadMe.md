@@ -12,7 +12,7 @@
 ```
 
 ```java    
-[mapper]
+[mapper(interface)]
 List<BoardVO> findBoardListPaging(Criteria cri);
 ```
 
