@@ -1,6 +1,7 @@
 #페이지네이션 화면 처리를 위한 클래스
 ## 사용법 예시
-`
+
+```xml
 [mapper xml]
 <!-- parameter로 Criteria를 받아서 데이터 limit에 활용 --> 
 <select id="findBoardListPaging" parameterType="paging.study.domain.Criteria" resultMap="boardMap">
@@ -8,12 +9,16 @@
         ORDER BY reg_date DESC
         limit #{pageNum}, #{amount}
     </select>
+```
 
+```java    
 [service]
 public List<BoardVO> findBoardListPaging(Criteria cri) {
         return boardMapper.findBoardListPaging(cri);
     }
-    
+```    
+
+```java    
 [controller]
 @GetMapping("/board/list")
     // 클라이언트에서 cri를 parameter로 받음(현재 몇페이지인지, 데이터를 몇개 가져올건지)
@@ -25,7 +30,9 @@ public List<BoardVO> findBoardListPaging(Criteria cri) {
         model.addAttribute("pageMaker", new PageMaker(boardCount, cri));
         return "board/boardList";
     }
+```    
 
+```thymeleaf
 [view](thymeleaf)
 <!-- 게시판 하단 페이지네이션 영역 start -->
     <div class="pull-right">
@@ -45,4 +52,4 @@ public List<BoardVO> findBoardListPaging(Criteria cri) {
         </ul>
     </div>
     <!-- // 게시판 하단의 페이지네이션 영역 end -->
-`
+```
