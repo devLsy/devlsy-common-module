@@ -8,16 +8,12 @@
         ORDER BY reg_date DESC
         limit #{pageNum}, #{amount}
     </select>
-`
 
-`
 [service]
 public List<BoardVO> findBoardListPaging(Criteria cri) {
         return boardMapper.findBoardListPaging(cri);
     }
-`
-
-`
+    
 [controller]
 @GetMapping("/board/list")
     // 클라이언트에서 cri를 parameter로 받음(현재 몇페이지인지, 데이터를 몇개 가져올건지)
@@ -29,9 +25,7 @@ public List<BoardVO> findBoardListPaging(Criteria cri) {
         model.addAttribute("pageMaker", new PageMaker(boardCount, cri));
         return "board/boardList";
     }
-`
 
-`
 [view](thymeleaf)
 <!-- 게시판 하단 페이지네이션 영역 start -->
     <div class="pull-right">
