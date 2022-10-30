@@ -12,6 +12,11 @@
 ```
 
 ```java    
+[mapper]
+List<BoardVO> findBoardListPaging(Criteria cri);
+```
+
+```java    
 [service]
 public List<BoardVO> findBoardListPaging(Criteria cri) {
         return boardMapper.findBoardListPaging(cri);
