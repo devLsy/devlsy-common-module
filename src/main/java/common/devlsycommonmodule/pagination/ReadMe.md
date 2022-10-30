@@ -21,7 +21,7 @@ public List<BoardVO> findBoardListPaging(Criteria cri) {
 ```java    
 [controller]
 @GetMapping("/board/list")
-    // 클라이언트에서 cri를 parameter로 받음(현재 몇페이지인지, 데이터를 몇개 가져올건지)
+    // 클라이언트에서 cri를 parameter로 받음(현재 몇페이지인지(cri의 pageNum))
     public String listPaging(@ModelAttribute("cri") Criteria cri, Model model) {
         List<BoardVO> list = boardService.findBoardListPaging(cri);
         int boardCount = boardService.findBoardCount();
