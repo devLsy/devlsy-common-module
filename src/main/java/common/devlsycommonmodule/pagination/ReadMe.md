@@ -1,5 +1,5 @@
 # 페이지네이션 화면 처리를 위한 클래스
-## 사용법 예시
+## 사용법 예시(https://devlsy.tistory.com/344)
 
 ```xml
 [mapper xml(mysql 기준)]
