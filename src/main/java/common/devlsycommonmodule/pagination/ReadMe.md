@@ -37,7 +37,7 @@ public List<BoardVO> findBoardListPaging(Criteria cri) {
     }
 ```    
 
-```thymeleaf
+```html
 [view](thymeleaf)
 <!-- 게시판 하단 페이지네이션 영역 start -->
     <div class="pull-right">
