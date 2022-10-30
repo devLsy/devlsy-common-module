@@ -2,7 +2,7 @@
 ## 사용법 예시
 
 ```xml
-[mapper xml]
+[mapper xml(mysql 기준)]
 <!-- parameter로 Criteria를 받아서 데이터 limit에 활용 --> 
 <select id="findBoardListPaging" parameterType="paging.study.domain.Criteria" resultMap="boardMap">
         SELECT * FROM t_board
