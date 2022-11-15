@@ -1,8 +1,8 @@
 # 페이지네이션 화면 처리를 위한 클래스
 ## 사용법 예시(https://devlsy.tistory.com/344)
 
-```xml
 [mapper xml(mysql 기준)]
+```xml
 <!-- parameter로 Criteria를 받아서 데이터 limit에 활용 --> 
 <select id="findBoardListPaging" parameterType="paging.study.domain.Criteria" resultMap="boardMap">
         SELECT * FROM t_board
@@ -11,20 +11,20 @@
     </select>
 ```
 
-```java    
 [mapper(interface)]
+```java    
 List<BoardVO> findBoardListPaging(Criteria cri);
 ```
 
-```java    
 [service]
+```java    
 public List<BoardVO> findBoardListPaging(Criteria cri) {
         return boardMapper.findBoardListPaging(cri);
     }
 ```    
 
-```java    
 [controller]
+```java    
 @GetMapping("/board/list")
     // 클라이언트에서 cri를 parameter로 받음(현재 몇페이지인지(cri의 pageNum))
     public String listPaging(@ModelAttribute("cri") Criteria cri, Model model) {
@@ -37,8 +37,8 @@ public List<BoardVO> findBoardListPaging(Criteria cri) {
     }
 ```    
 
-```html
 [view](thymeleaf)
+```html
 <!-- 게시판 하단 페이지네이션 영역 start -->
     <div class="pull-right">
         <ul class="pagination pagination-sm no-margin pull-right">  
