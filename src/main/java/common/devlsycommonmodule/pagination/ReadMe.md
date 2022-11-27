@@ -40,8 +40,8 @@ public List<BoardVO> findBoardListPaging(Criteria cri) {
 [view](thymeleaf)
 ```html
 <!-- 게시판 하단 페이지네이션 영역 start -->
-    <div class="pull-right">
-        <ul class="pagination pagination-sm no-margin pull-right">  
+<nav aria-label="Page navigation">
+        <ul class="pagination">  
             <!-- prev --> 
             <li th:if="${pageMaker.prev} == true">
                 <a th:href="@{/board/list(pageNum=${pageMaker.startPage}-1)}">Prev</a>
@@ -55,6 +55,6 @@ public List<BoardVO> findBoardListPaging(Criteria cri) {
                 <a th:href="@{/board/list(pageNum=${pageMaker.endPage}+1)}">Next</a>
             </li>
         </ul>
-    </div>
-    <!-- // 게시판 하단의 페이지네이션 영역 end -->
+</nav>
+<!-- // 게시판 하단의 페이지네이션 영역 end -->
 ```
