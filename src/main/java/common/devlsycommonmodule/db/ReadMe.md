@@ -143,5 +143,90 @@ class BoardServiceTest {
 ```
 
 # 페이지에서 테이블의 컬럼을 추가, 삭제 등을 하는 예시
+[view]
+```html
+<div layout:fragment="content" class="container">
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        <h5 class="my-3 border-bottom pb-2">필드추가</h5>
+        <form th:action="@{/tables/addField}" method="post">
+            <div class="mb-3">
+                <label for="tableName" class="form-label">테이블명</label>
+                <input type="text" name="tableName" class="form-control" th:value="${param.tableName}" readonly>
+            </div>
+            <div class="mb-3">
+                <label for="field" class="form-label">필드명</label>
+                <input type="text" name="field" id="field" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label for="dataType" class="form-label">데이터타입</label>
+                <select class="form-select" name="dataType">
+                    <option value="">선택해주세요.</option>
+                    <option th:value="VARCHAR" th:text="VARCHAR"></option>
+                    <option th:value="TEXT" th:text="TEXT"></option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="length" class="form-label">데이터크기</label>
+                <input type="number" name="length" id="length" class="form-control" min="1" max="250">
+            </div>
+            <button type="submit" class="btn btn-primary my-2">저장하기</button>
+            <a th:href="@{/tables/list}" class="btn btn-secondary">목록</a>
+        </form>
+
+    </main>
+</div>
+```
+[contoller]
+```java
+@GetMapping(value = "/addField")
+    public String addField(Model model, @RequestParam("tableName") String tableName) {
+        List<MenuVo> menuList = menuService.selectMenuList(new Criteria());
+        model.addAttribute("menuList", menuList);
+        return "pages/table/table_modify";
+    }
+
+@PostMapping(value = "/addField")
+    public String addField(@RequestParam("tableName") String tableName,
+                           @RequestParam("field") String field,
+                           @RequestParam("dataType") String dataType,
+                           @RequestParam("length") String length) throws Exception {
+        tableService.addField(tableName, field, dataType, length);
+        return "redirect:/tables/list";
+    }
+```
+
+[service]
+```java
+    /**
+     * 필드 추가
+     * @param tableName
+     * @param addField
+     * @param fieldType
+     * @param length
+     * @throws Exception
+     */
+    @Transactional
+    public void addField(String tableName, String addField, String fieldType, String length) throws Exception{
+        StringBuffer sb = new StringBuffer();
+        sb.append(fieldType).append("(").append(length).append(")");
+
+        fieldType = String.valueOf(sb);
+        tableMapper.addColumn(tableName, addField, fieldType);
+    }
+```
+
+[mapper]
+```java
+void addColumn(@Param("tableName") String tableName, @Param("addField") String addField, @Param("fieldType") String fieldType);
+```
+
+[maper xml]
+```xml
+<!-- 컬럼 추가 -->
+<update id="addColumn" parameterType="map">
+        ALTER TABLE ${tableName} ADD COLUMN ${addField} ${fieldType}
+</update>
+```
+
 
 
