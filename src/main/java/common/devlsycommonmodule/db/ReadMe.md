@@ -232,6 +232,7 @@ void addColumn(@Param("tableName") String tableName, @Param("addField") String a
 ```
 ## 테이블 컬럼 삭제
 ![image](https://user-images.githubusercontent.com/44331989/204124998-13c8d4ee-1ebb-4917-949c-05db3f5b7517.png) <br>
+![image](https://user-images.githubusercontent.com/44331989/204125021-56ee8d76-a04f-4e0f-b05d-d20a13610c5e.png) <br>
 
 [view]
 ```html
