@@ -143,7 +143,9 @@ class BoardServiceTest {
 ```
 
 # 페이지에서 테이블의 컬럼을 추가, 삭제 등을 하는 예시
+## 테이블 컬럼 
 ![image](https://user-images.githubusercontent.com/44331989/204124581-67c0a90b-e22c-4eb8-9e1e-3ebb8e97795e.png) <br>
+![image](https://user-images.githubusercontent.com/44331989/204124778-c9c5378d-b201-4cb6-9361-0e481d7f6626.png) <br>
 [view]
 ```html
 <div layout:fragment="content" class="container">
@@ -216,7 +218,7 @@ class BoardServiceTest {
     }
 ```
 
-[mapper]
+[mapper interface]
 ```java
 void addColumn(@Param("tableName") String tableName, @Param("addField") String addField, @Param("fieldType") String fieldType);
 ```
@@ -228,6 +230,80 @@ void addColumn(@Param("tableName") String tableName, @Param("addField") String a
         ALTER TABLE ${tableName} ADD COLUMN ${addField} ${fieldType}
 </update>
 ```
+## 테이블 컬럼 삭제
+![image](https://user-images.githubusercontent.com/44331989/204124834-acc9bd3e-bb63-4698-87be-86d7759acb59.png) <br>
+[view]
+```html
+<div layout:fragment="content" class="container">
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        <h5 class="my-3 border-bottom pb-2">테이블 컬럼 삭제</h5>
+        <form th:action="@{/tables/delField}" method="post">
+        <div class="alert alert-danger" role="alert">
+            <span>삭제할 컬럼을 선택 해주세요.(복구 불가하니 신중히 선택 해주세요.)</span>
+        </div>
+        <div class="mb-3">
+            <label for="tableName" class="form-label">테이블명</label>
+            <input type="text" name="tableName" class="form-control" th:value="${param.tableName}" readonly>
+        </div>
+        <div class="mb-3">
+            <label for="delField" class="form-label">컬럼 목록</label>
+            <select class="form-select" name="delField">
+                <option th:each="list : ${tableInfo}" th:value="${list.columnName}" th:text="${list.columnName}"></option>
+            </select>
+        </div>
+            <button type="submit" class="btn btn-danger my-2">삭제하기</button>
+            <a th:href="@{/tables/list}" class="btn btn-secondary">목록</a>
+        </form>
+    </main>
+</div>
+</html>
+```
+
+[controller]
+```java
+@GetMapping(value = "/delField")
+    public String delField(Model model, @RequestParam("tableName") String tableName) {
+        List<TableVO> tableInfo = tableService.selectTableDetail(tableName);
+        List<MenuVo> menuList = menuService.selectMenuList(new Criteria());
+        model.addAttribute("tableInfo", tableInfo);
+        model.addAttribute("menuList", menuList);
+        return "pages/table/table_del";
+    }
+
+    @PostMapping(value = "/delField")
+    public String delField(@RequestParam("tableName") String tableName, @RequestParam("delField") String delField) throws Exception {
+        tableService.delField(tableName, delField);
+        return "redirect:/tables/list";
+    }
+```
+
+[service]
+```java
+    /**
+     * 필드 삭제
+     * @param tableName
+     * @param delField
+     * @throws Exception
+     */
+    @Transactional
+    public void delField(String tableName, String delField) throws Exception{
+        tableMapper.delColumn(tableName, delField);
+    }
+```
+
+[mapper interface]
+```java
+void delColumn(@Param("tableName") String tableName, @Param("delField") String delField);
+```
+
+[mapper xml]
+```xml
+<!-- 컬럼 삭제 -->
+<update id="delColumn" parameterType="map">
+        ALTER TABLE ${tableName} DROP COLUMN ${delField}
+</update>
+```
+
 
 
 
