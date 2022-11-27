@@ -266,9 +266,7 @@ void addColumn(@Param("tableName") String tableName, @Param("addField") String a
 @GetMapping(value = "/delField")
     public String delField(Model model, @RequestParam("tableName") String tableName) {
         List<TableVO> tableInfo = tableService.selectTableDetail(tableName);
-        List<MenuVo> menuList = menuService.selectMenuList(new Criteria());
         model.addAttribute("tableInfo", tableInfo);
-        model.addAttribute("menuList", menuList);
         return "pages/table/table_del";
     }
 
@@ -306,6 +304,81 @@ void delColumn(@Param("tableName") String tableName, @Param("delField") String d
 </update>
 ```
 
+## 테이블의 컬럼 정보 조회(mysql 기준)
+![image](https://user-images.githubusercontent.com/44331989/204125089-53f595b7-1cfb-4b11-babf-2694b354a452.png) <br>
+[view]
+```html
+<div layout:fragment="content" class="container">
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        <h5 class="my-3 border-bottom pb-2">테이블 상세</h5>
 
+        <table class="table">
+            <thead class="table-dark">
+            <tr>
+                <th>테이블명</th>
+                <th>컬럼명</th>
+                <th>데이터타입</th>
+                <th>널여부</th>
+                <th>코멘트</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="list : ${tableDetail}">
+                <td th:text="${list.tableName}"></td>
+                <td th:text="${list.columnName}"></td>
+                <td th:text="${list.dataType}"></td>
+                <td th:text="${list.isNullable}"></td>
+                <td th:text="${list.columnComment}"></td>
+            </tr>
+            </tbody>
+        </table>
+            <!-- query string에서 tableName값을 가져와서 전달 -->
+            <a th:href="@{/tables/addField(tableName=${param.tableName})}" id="addField" class="btn btn-primary">필드추가</a>
+            <a th:href="@{/tables/delField(tableName=${param.tableName})}" id="delField" class="btn btn-danger">필드삭제</a>
+            <a th:href="@{/tables/list}" class="btn btn-secondary">목록</a>
+        </form>
+    </main>
+</div>
+</html>
+```
 
+[controller]
+```java
+@GetMapping(value = "/detail")
+    public String tableDetail(Model model, @RequestParam("tableName") String tableName) {
+        List<TableVO> tableDetail = tableService.selectTableDetail(tableName);
+        model.addAttribute("tableDetail", tableDetail);
+        return "pages/table/table_detail";
+    }
+```
 
+[service]
+```java
+    /**
+     * 테이블 상세 조회
+     * @param tableName
+     * @return
+     */
+    public List<TableVO> selectTableDetail(String tableName) {
+        return tableMapper.selectTableDetail(tableName);
+    }
+```
+
+[mapper interface]
+```java
+List<TableVO> selectTableDetail(String tableName);
+```
+
+[mapper xml]
+```xml
+<!-- 테이블 단건 조회(information_schema 접근 하려면 root권한 있어야 함) -->
+    <select id="selectTableDetail" parameterType="String" resultMap="tableMap">
+        SELECT   table_name
+                ,column_name
+                ,data_type
+                ,is_nullable
+                ,column_comment
+        FROM information_schema.`COLUMNS`
+        WHERE table_name  = #{tableName}
+    </select>
+```
