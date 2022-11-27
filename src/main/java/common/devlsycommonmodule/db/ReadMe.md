@@ -143,6 +143,7 @@ class BoardServiceTest {
 ```
 
 # 페이지에서 테이블의 컬럼을 추가, 삭제 등을 하는 예시
+![image](https://user-images.githubusercontent.com/44331989/204124581-67c0a90b-e22c-4eb8-9e1e-3ebb8e97795e.png) <br>
 [view]
 ```html
 <div layout:fragment="content" class="container">
