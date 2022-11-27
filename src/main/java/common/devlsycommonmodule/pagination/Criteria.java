@@ -20,6 +20,10 @@ public class Criteria {
         this.pageNum = 1;
         this.amount = 10;
     }
+    
+    public int getPageNum() {
+        return (pageNum - 1) * this.amount;
+    }
 
     public Criteria(int pageNum, int amount, String title, String name) {
         this.pageNum = pageNum;
