@@ -7,7 +7,7 @@
 <select id="findBoardListPaging" parameterType="paging.study.domain.Criteria" resultMap="boardMap">
         SELECT * FROM t_board
         ORDER BY reg_date DESC
-        limit #{pageNum}, #{amount}
+        limit #{limitStart}, #{amount}
     </select>
 ```
 
