@@ -371,7 +371,7 @@ List<TableVO> selectTableDetail(String tableName);
 
 [mapper xml]
 ```xml
-<!-- 테이블 단건 조회(information_schema 접근 하려면 root권한 있어야 함) -->
+<!-- 테이블 단건 조회(information_schema 접근 하려면 권한 있어야 함) -->
     <select id="selectTableDetail" parameterType="String" resultMap="tableMap">
         SELECT   table_name
                 ,column_name
