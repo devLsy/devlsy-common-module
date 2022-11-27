@@ -40,21 +40,21 @@ public List<BoardVO> findBoardListPaging(Criteria cri) {
 [view](thymeleaf)
 ```html
 <!-- 게시판 하단 페이지네이션 영역 start -->
-<nav aria-label="Page navigation">
-        <ul class="pagination">  
-            <!-- prev --> 
-            <li th:if="${pageMaker.prev} == true">
-                <a th:href="@{/board/list(pageNum=${pageMaker.startPage}-1)}">Prev</a>
-            </li>
-            <!-- pageMaker의 startPage부터 endPage까지 루프, a태그의 href에 idx를 링크(get방식으로 pageNum을 붙여서) --> 
-            <li id="paginate_btn" th:each="idx: ${#numbers.sequence(pageMaker.startPage, pageMaker.endPage)}" th:classappend="${pageMaker.cri.pageNum} == ${idx} ? active : null">
-                <a th:href="@{/board/list(pageNum=${idx})}" th:text="${idx}"></a>
-            </li>
-            <!-- next --> 
-            <li th:if="${pageMaker.next} == true and ${pageMaker.endPage > 0}">
-                <a th:href="@{/board/list(pageNum=${pageMaker.endPage}+1)}">Next</a>
-            </li>
-        </ul>
-</nav>
-<!-- // 게시판 하단의 페이지네이션 영역 end -->
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                <!-- prev -->
+                <li class="page-item" th:if="${pageMaker.prev} == true">
+                    <a class="page-link" th:href="@{/board/list(pageNum=${pageMaker.startPage}-1)}">Prev</a>
+                </li>
+                <!-- pageMaker의 startPage부터 endPage까지 루프, a태그의 href에 idx를 링크(get방식으로 pageNum을 붙여서) -->
+                <li class="page-item" id="paginate_btn" th:each="idx: ${#numbers.sequence(pageMaker.startPage, pageMaker.endPage)}" th:classappend="${pageMaker.cri.pageNum} == ${idx} ? active : null">
+                    <a class="page-link" th:href="@{/board/list(pageNum=${idx})}" th:text="${idx}"></a>
+                </li>
+                <!-- next -->
+                <li class="page-item" th:if="${pageMaker.next} == true and ${pageMaker.endPage > 0}">
+                    <a class="page-link" th:href="@{/board/list(pageNum=${pageMaker.endPage}+1)}">Next</a>
+                </li>
+            </ul>
+        </nav>
+        <!-- // 게시판 하단의 페이지네이션 영역 end -->
 ```
