@@ -2,6 +2,8 @@
 ## template은 bootstrap 5.2(https://getbootstrap.com/docs/5.2/getting-started/download/)
 
 [layout.html]: 공통으로 사용되는 layout
+정적 리소스 구조는 아래와 같음 <br>
+![image](https://user-images.githubusercontent.com/44331989/204127124-b2493cfa-e294-4436-8ba8-8142083fe8f9.png) <br>
 ```html
 <!doctype html>
 <html lang="ko" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org">
