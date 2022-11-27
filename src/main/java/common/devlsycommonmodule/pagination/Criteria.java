@@ -19,8 +19,7 @@ public class Criteria {
 
     // 시작 페이지 1번, 기본값 페이지 출력 개수 10개로 세팅(향후 변경 가능)
     public Criteria() {
-        this.pageNum = 1;
-        this.amount = 10;
+        this(1, 10);
     }
 
     public Criteria(int pageNum, int amount) {
