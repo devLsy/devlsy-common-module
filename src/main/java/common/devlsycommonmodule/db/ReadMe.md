@@ -142,4 +142,6 @@ class BoardServiceTest {
 }
 ```
 
+# 페이지에서 테이블의 컬럼을 추가, 삭제 등을 하는 예시
+
 
