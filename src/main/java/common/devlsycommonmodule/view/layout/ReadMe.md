@@ -1,5 +1,5 @@
 # thymeleaf layout을 이용한 화면 레이아웃 설정
-## template은 bootstrap 5.2
+## template은 bootstrap 5.2(https://getbootstrap.com/docs/5.2/getting-started/download/)
 
 [layout.html]: 공통으로 사용되는 layout
 ```html
