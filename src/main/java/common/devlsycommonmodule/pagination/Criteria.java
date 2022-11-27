@@ -11,6 +11,7 @@ public class Criteria {
     // for paging
     private int pageNum;        // 페이지 번호(현재 페이지가 몇 페이지인지)
     private int amount;         // 한 화면에 출력한 페이지 개수
+    private int limitStart;             // 쿼리에서 (pageNum -1) * amount 사용하기 위한 변수
 
     // for search
     private String title;
@@ -20,11 +21,10 @@ public class Criteria {
         this.pageNum = 1;
         this.amount = 10;
     }
-
-    public Criteria(int pageNum, int amount, String title, String name) {
+    
+    public Criteria(int pageNum, int amount, int limitStart) {
         this.pageNum = pageNum;
         this.amount = amount;
-        this.title = title;
-        this.name = name;
+        this.limitStart = (pageNum - 1) * amount;
     }
 }
