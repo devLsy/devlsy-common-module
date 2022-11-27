@@ -143,7 +143,7 @@ class BoardServiceTest {
 ```
 
 # 페이지에서 테이블의 컬럼을 추가, 삭제 등을 하는 예시
-## 테이블 컬럼 
+## 테이블 컬럼 추가
 ![image](https://user-images.githubusercontent.com/44331989/204124581-67c0a90b-e22c-4eb8-9e1e-3ebb8e97795e.png) <br>
 ![image](https://user-images.githubusercontent.com/44331989/204124778-c9c5378d-b201-4cb6-9361-0e481d7f6626.png) <br>
 [view]
@@ -231,7 +231,8 @@ void addColumn(@Param("tableName") String tableName, @Param("addField") String a
 </update>
 ```
 ## 테이블 컬럼 삭제
-![image](https://user-images.githubusercontent.com/44331989/204124834-acc9bd3e-bb63-4698-87be-86d7759acb59.png) <br>
+![image](https://user-images.githubusercontent.com/44331989/204124998-13c8d4ee-1ebb-4917-949c-05db3f5b7517.png) <br>
+
 [view]
 ```html
 <div layout:fragment="content" class="container">
