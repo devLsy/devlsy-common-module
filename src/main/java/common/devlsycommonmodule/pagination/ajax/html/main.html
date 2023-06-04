@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default_layout}">
+
+<!-- Content -->
+<div layout:fragment="content">
+    <main>
+        <div class="container-fluid px-4">
+            <h1 class="mt-4">게시글 목록</h1>
+                <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0" method="get">
+                <div class="input-group">
+                    <select name="type" id="type" th:field="${search.type}">
+                        <option value="">선택해라</option>
+                        <option value="W">작성자</option>
+                        <option value="T">제목</option>
+                        <option value="C">내용</option>
+                    </select>
+                    <input class="form-control" th:field="${search.keyword}" type="text" id="keyword" name="keyword" placeholder="검색어를 입력해라." aria-label="Search for..." aria-describedby="btnNavbarSearch" />
+                    <button class="btn btn-primary" id="btnSearch" type="button"><i class="fas fa-search"></i></button>
+                </div>
+            </form>
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <i class="fas fa-table me-1"></i>
+                        게시글이야.
+                    </div>
+                    <form id="frm" action="/del" method="post">
+                    <div class="card-body">
+                        <table id="boardList" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>순번</th>
+                                    <th>제목</th>
+                                    <th>내용</th>
+                                    <th>작성자</th>
+                                    <th>등록일</th>
+                                    <th>수정일</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <!-- 동적 tbody -->
+                            <tbody id="boardBody"></tbody>
+                        </table>
+                    </div>
+                    <!-- 동적 페이지네이션 -->
+                    <nav id="pagiNav" aria-label="Page navigation"></nav>
+                    </form>
+                </div>
+            <div class="input-group">
+                <a th:href="@{/reg}" class="btn btn-success">등록</a>
+            </div>
+        </div>
+    </main>
+
+    <script layout:fragment="script" th:inline="javascript" type="text/javascript">
+
+        const defaultParam = { type: "", keyword: ""};
+        let searchParam = defaultParam;
+
+        $(document).ready(function () {
+
+            $("#btnSearch").on("click", function (e) {
+                e.preventDefault();
+                if ($("#type option:selected").val() === "") {
+                        alert("키워드를 선택하라니까?");
+                        return;
+                    } else {
+                        console.log("검색한다?");
+                        searchParam = {type: $("#type").val(), keyword: $("#keyword").val() }
+                        getList(searchParam, 1);
+                }
+            });
+            //초기 목록은 1페이지로 고정
+            getList(defaultParam, 1);
+        });
+
+        //페이징
+        function movePage(pageNum) {
+            getList(searchParam, pageNum);
+        }
+
+        //게시글 목록
+        function getList(params, currentPage) {
+            $.ajax({
+                url : '/listAjax?currentPage=' + currentPage,
+                type : 'post',
+                data: params,
+                success: function (result) {
+                    let boardHtml = "";
+
+                    let list = result.list;
+                    let paging = result.paging;
+                    //테이블 draw
+                    for (let i = 0; i < list.length; i++) {
+                            boardHtml += "<tr>";
+                            boardHtml += "<td>" + list[i].no;
+                            boardHtml += "</td>";
+                            boardHtml += "<td>" + list[i].title;
+                            boardHtml += "</td>";
+                            boardHtml += "<td>" + list[i].content;
+                            boardHtml += "</td>";
+                            boardHtml += "<td>" + list[i].userId;
+                            boardHtml += "</td>";
+                            boardHtml += "<td>" + list[i].regDate;
+                            boardHtml += "</td>";
+                            boardHtml += "<td>" + list[i].modDate;
+                            boardHtml += "</td>";
+                            boardHtml += "</tr>";
+                    }
+                    $("#boardBody").html(boardHtml);
+
+                    //페이지네이션 draw
+                    let pageHtml = "";
+
+                    pageHtml += "<ul class='pagination justify-content-center'>";
+
+                    if (result.paging.firstPageNo > 1) {
+                        const prev = parseInt(result.paging.firstPageNo) - 1;
+                        pageHtml += "<li class='page-item'>";
+                        pageHtml += "<a href='#' class='page-link' onclick='movePage("+ prev +")' style='cursor: pointer'>Prev</a>";
+                        pageHtml += "</li>";
+                    }
+
+                    for (let i = result.paging.firstPageNo; i <= result.paging.lastPageNo; i++) {
+                        pageHtml += "<li class='page-item'>";
+
+                        if (result.paging.currentPage === i) {
+                            pageHtml += "<a class='page-link active' onclick='movePage(" + i + ")' style='cursor: pointer'>" + i + "</a>";
+                            pageHtml += "</li>";
+                        } else {
+                            pageHtml += "<a class='page-link' onclick='movePage(" + i + ")' style='cursor: pointer'>" + i + "</a>";
+                            pageHtml += "</li>";
+                        }
+                    }
+
+                    if (result.paging.lastPageNo < result.paging.totalPageCount) {
+                        const next = parseInt(result.paging.lastPageNo) + 1;
+                        pageHtml += "<li class='page-item'>";
+                        pageHtml += "<a href='#' class='page-link' onclick='movePage("+ next +")' style='cursor: pointer'>Next</a>";
+                        pageHtml += "</li>";
+                    }
+                    pageHtml += "</ul>";    
+
+                    $("#pagiNav").html(pageHtml);
+
+
+                },
+                error: function (request, status, error) {
+                    console.log(error);
+                }
+            });
+        }
+    </script>
+
+</div>
+</html>

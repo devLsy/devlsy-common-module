@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="study.thboard2.mapper.BoardMapper">
+
+<!-- 검색 parameter값 -->
+<sql id="appendSearch">
+    <!-- 제목 -->
+    <if test="type == 'T'.toString()">
+        AND TITLE LIKE '%' || #{keyword} || '%'
+    </if>
+    <!-- 내용 -->
+    <if test="type == 'C'.toString()">
+        AND CONTENT LIKE '%' || #{keyword} || '%'
+    </if>
+    <!-- 작성자 -->
+    <if test="type == 'W'.toString()">
+        AND USER_ID LIKE '%' || #{keyword} || '%'
+    </if>
+</sql>
+
+    <!--게시글 목록 조회-->
+    <select id="selectBoardList" parameterType="CommonVo" resultType="BoardVo">
+        /* 게시글 목록 조회 */
+         SELECT T2.no
+              , T2.BOARD_NO AS boardNo
+              , T2.TITLE AS title
+              , T2.CONTENT AS content
+              , T2.USER_ID AS userId
+              , T2.USE_YN AS userYn
+              , TO_CHAR(T2.REG_DATE, 'YYYY-MM-DD') AS regDate
+              , NVL(TO_CHAR(T2.MOD_DATE, 'YYYY-MM-DD'),'수정사항 없음') AS modDate
+           FROM
+               (
+                    SELECT ROWNUM AS no
+                         , T1.BOARD_NO
+                         , T1.TITLE
+                         , T1.CONTENT
+                         , T1.USER_ID
+                         , T1.USE_YN
+                         , T1.REG_DATE
+                         , T1.MOD_DATE
+                      FROM
+                              ( SELECT BOARD_NO
+                                     , TITLE
+                                     , CONTENT
+                                     , USER_ID
+                                     , USE_YN
+                                     , REG_DATE
+                                     , MOD_DATE
+                                  FROM BOARD_INFO
+                                 WHERE 1=1
+                                   AND USE_YN = 'Y'
+                                <include refid="appendSearch"/>
+                                 ORDER BY REG_DATE DESC ) T1
+           <![CDATA[ WHERE ROWNUM <= #{lastRecordIndex} ]]>) T2
+         WHERE T2.no >= #{firstRecordIndex}
+    </select>
+
+    <!--게시글 전체 카운트-->
+    <select id="selectBoardCnt" parameterType="CommonVo" resultType="int">
+        SELECT COUNT(*)
+          FROM BOARD_INFO
+         <where>
+         <include refid="appendSearch"/>
+         </where>
+    </select>
+</mapper>
