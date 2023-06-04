@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="study.thboard2.mapper.UserMapper">
+
+<!--사용자 정보 저장-->
+    <insert id="insertUser" parameterType="UserVo">
+        <selectKey keyProperty="userNo" resultType="INTEGER" order="BEFORE">
+            SELECT USER_NO_SEQ.NEXTVAL FROM DUAL
+        </selectKey>
+        /* 사용자 정보 저장 */
+        INSERT INTO USER_INFO
+            (
+                USER_NO                 /* 사용자 순번 */
+              , USER_ID                 /* 사용자 아이디 */
+              , USER_PASSWORD           /* 사용자 비밀번호 */
+              , USER_NAME               /* 사용자명 */
+              , USER_EMAIL              /* 사용자 이메일 */
+              , REG_DATE                /* 등록일 */
+            )
+        VALUES
+            (
+                #{userNo}
+              , #{userId}
+              , #{userPassword}
+              , #{userName}
+              , #{userEmail}
+              , SYSDATE
+            )
+    </insert>
+
+    <!--사용자 정보 확인(로그인 시 활용)-->
+    <select id="selectByUserId" parameterType="map" resultType="UserVo">
+        /* 사용자 정보 확인(로그인 시 활용) */
+        SELECT USER_NO AS userNo                /* 사용자 순번 */
+             , USER_ID AS userId                /* 사용자 아이디 */
+             , USER_PASSWORD AS userPassword    /* 사용자 비밀번호 */
+             , USER_NAME AS userName            /* 사용자명 */
+             , USER_EMAIL AS userEmail          /* 사용자 이메일 */
+             , USE_YN AS useYn                  /* 사용여부 */
+             , REG_DATE AS regDate              /* 등록일 */
+             , MOD_DATE AS modDate              /* 수정일 */
+          FROM USER_INFO
+         WHERE USER_ID = #{userId}
+    </select>
+</mapper>
