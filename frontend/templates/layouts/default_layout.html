@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>thymeleaf board test</title>
+<!--    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />-->
+    <link href="css/styles.css" rel="stylesheet" /> 
+    <!--jquery script-->
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+</head>
+
+<body class="sb-nav-fixed">
+<!-- header fragment 사용 -->
+<th:block th:replace="fragments/header :: headerFragment"></th:block>
+<div id="layoutSidenav">
+    <div id="layoutSidenav_nav">
+        <!-- sidebar fragment 사용 -->
+        <th:block th:replace="fragments/sidebar :: sidebarFragment"></th:block>
+    </div>
+    <div id="layoutSidenav_content">
+        <main>
+            <!-- content fragment 사용 -->
+            <th:block layout:fragment="content"></th:block>
+            <!-- content script -->
+            <th:block layout:fragment="script"></th:block>
+        </main>
+        <!-- footer fragment 사용 -->
+        <th:block th:replace="fragments/footer :: footerFragment"></th:block>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+<script src="js/scripts.js"></script>
+<script src="js/common.js"></script>
+
+</body>
+</html>

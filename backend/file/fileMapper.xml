@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="study.thboard2.mapper.FileMapper">
+
+    <!--파일 목록 조회-->
+    <select id="selectFileList" parameterType="map" resultType="FileVo">
+        /* 파일 목록 조회 */
+        SELECT FILE_NO AS fileNo
+             , BOARD_NO AS boardNo
+             , FILE_ORG_NAME AS fileOrgName
+             , FILE_PATH AS filePath
+             , FILE_SIZE AS fileSize
+             , DEL_YN AS delYn
+             , REG_DATE AS regDate
+             , MOD_DATE AS modDate
+          FROM FILE_INFO
+         WHERE 1=1
+           AND BOARD_NO = #{boardNo}
+           AND DEL_YN = 'N'
+         ORDER BY REG_DATE DESC
+    </select>
+
+    <!--파일정보 저장-->
+    <insert id="insertFile" parameterType="FileVo">
+        <selectKey keyProperty="fileNo" resultType="INTEGER" order="BEFORE">
+            SELECT FILE_NO_SEQ.NEXTVAL FROM DUAL
+        </selectKey>
+        /* 파일정보 저장 */
+        INSERT INTO FILE_INFO
+            (
+                FILE_NO
+              , BOARD_NO
+              , FILE_ORG_NAME
+              , FILE_PATH
+              , FILE_SIZE
+              , REG_DATE
+            )
+        VALUES
+            (
+                #{fileNo}
+              , #{boardNo}
+              , #{fileOrgName}
+              , #{filePath}
+              , #{fileSize}
+              , SYSDATE
+            )
+    </insert>
+
+    <!--파일정보 상세-->
+    <select id="selectFileDetail" parameterType="map" resultType="FileVo">
+        /* 파일정보 상세 조회 */
+        SELECT FILE_NO AS fileNo
+             , BOARD_NO AS boardNo
+             , FILE_ORG_NAME AS fileOrgName
+             , FILE_PATH AS filePath
+             , FILE_SIZE AS fileSize
+             , DEL_YN AS delYn
+             , REG_DATE AS regDate
+             , MOD_DATE AS modDate
+          FROM FILE_INFO
+         WHERE 1=1
+           AND FILE_NO = #{fileNo}
+         ORDER BY REG_DATE DESC
+    </select>
+
+    <!--파일정보 수정-->
+    <update id="updateFile" parameterType="FileVo">
+        /* 파일정보 수정 */
+        UPDATE FILE_INFO
+           SET FILE_ORG_NAME = #{fileOrgName}
+             , FILE_PATH = #{filePath}
+             , FILE_SIZE = #{fileSize}
+             , MOD_DATE = SYSDATE
+         WHERE FILE_NO = #{fileNo}
+    </update>
+
+    <!--파일 삭제-->
+    <update id="deleteFile" parameterType="map">
+        /* 파일 삭제 */
+        UPDATE FILE_INFO
+           SET DEL_YN = 'Y'
+         WHERE FILE_NO = #{fileNo}
+    </update>
+
+</mapper>

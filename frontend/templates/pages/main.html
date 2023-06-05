@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default_layout}">
+
+<!-- Content -->
+<div layout:fragment="content">
+    <main>
+        <div class="container-fluid px-4">
+            <h1 class="mt-4">게시글 목록</h1>
+                <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0" method="get">
+                <div class="input-group">
+                    <select name="type" id="type" th:field="${search.type}">
+                        <option value="">선택해라</option>
+                        <option value="W">작성자</option>
+                        <option value="T">제목</option>
+                        <option value="C">내용</option>
+                    </select>
+                    <input class="form-control" th:field="${search.keyword}" type="text" id="keyword" name="keyword" placeholder="검색어를 입력해라." aria-label="Search for..." aria-describedby="btnNavbarSearch" />
+                    <button class="btn btn-primary" id="btnSearch" type="button"><i class="fas fa-search"></i></button>
+                </div>
+            </form>
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <i class="fas fa-table me-1"></i>
+                        게시글이야.
+                    </div>
+                    <form id="frm" action="/del" method="post">
+                    <div class="card-body">
+                        <table id="boardList" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>순번</th>
+                                    <th>제목</th>
+                                    <th>내용</th>
+                                    <th>작성자</th>
+                                    <th>등록일</th>
+                                    <th>수정일</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <!-- 동적 tbody -->
+                            <tbody id="boardBody"></tbody>
+                        </table>
+                    </div>
+                    <!-- 동적 페이지네이션 -->
+                    <nav id="pagiNav" aria-label="Page navigation"></nav>
+                    </form>
+                </div>
+            <div class="input-group">
+                <a th:href="@{/reg}" class="btn btn-success">등록</a>
+            </div>
+        </div>
+    </main>
+
+    <script layout:fragment="script" th:inline="javascript" type="text/javascript">
+
+       
+
+        $(document).ready(function () {
+
+      
+        });
+
+     
+
+    </script>
+
+</div>
+</html>

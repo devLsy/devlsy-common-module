@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default_layout}">
+<!-- Content -->
+<div layout:fragment="content">
+    <!--게시글 쓰기-->
+    <th:block th:if="${boardNo == null}">
+    <main>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-7">
+                    <div class="card shadow-lg border-0 rounded-lg mt-5">
+                        <div class="card-header"><h3 class="text-center font-weight-light my-4">게시글 쓰기</h3></div>
+                        <div class="card-body">
+                            <form name="regFrm" id="regFrm" method="post" enctype="multipart/form-data">
+                                <input type="hidden" id="userId" name="userId" th:value="${session.id}">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-3 mb-md-0">
+                                            <input class="form-control" id="title" name="title" type="text" placeholder="제목을 입력해라." />
+                                            <label for="title">제목</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <textarea class="form-control h-25" rows="10" id="content" name="content"></textarea>
+                                    <label for="content">내용</label>
+                                    <input type="file" name="files" id="files" multiple="multiple">
+<!--                                    <input type="file" name="files" id="files">-->
+                                </div>
+<!--                                    <button type="submit" id="regBtn" class="btn btn-success">등록</button>-->
+                                    <button type="button" id="regAjax" class="btn btn-success">등록</button>
+                                    <a th:href="@{/}" class="btn btn-info">목록</a>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    </th:block>
+
+    <!--게시글 수정-->
+    <th:block th:unless="${boardNo == null}">
+    <main>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-7">
+                    <div class="card shadow-lg border-0 rounded-lg mt-5">
+                        <div class="card-header"><h3 class="text-center font-weight-light my-4">게시글 수정</h3></div>
+                        <div class="card-body">
+                            <form name="updateFrm" id="updateFrm" action="/mod" method="post">
+                                <input type="hidden" name="boardNo" id="boardNo" th:value="${boardNo}">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <th:block th:if="${info.userId == session.id}">
+                                        <div class="form-floating mb-3 mb-md-0">
+                                            <input class="form-control" id="title" name="title" type="text" placeholder="제목을 입력해라." th:value="${info?.title}"/>
+                                            <label for="title">제목</label>
+                                        </div>
+                                        </th:block>
+                                        <th:block th:unless="${info.userId == session.id}">
+                                        <div class="form-floating mb-3 mb-md-0">
+                                            <input class="form-control" id="title" name="title" type="text" placeholder="제목을 입력해라." th:value="${info?.title}" disabled/>
+                                            <label for="title">제목</label>
+                                        </div>
+                                        </th:block>
+                                    </div>
+                                </div>
+                                <th:block th:if="${info.userId == session.id}">
+                                <div class="form-floating mb-3">
+                                    <textarea class="form-control h-25" rows="10" id="content" name="content" th:text="${info?.content}"></textarea>
+                                    <label for="content">내용</label>
+                                </div>
+                                </th:block>
+                                <th:block th:unless="${info.userId == session.id}">
+                                <div class="form-floating mb-3">
+                                    <textarea class="form-control h-25" rows="10" id="content" name="content" th:text="${info?.content}" disabled></textarea>
+                                    <label for="content">내용</label>
+                                </div>
+                                </th:block>
+    
+                                <!--이미지 미리보기-->
+                                <div th:each="file : ${files} ">
+                                    <a th:href="|/download/${file.fileNo}|" th:title="${file.fileOrgName}">
+<!--                                        <img th:src="|/images/${file.fileNo}|" width="150" height="150">-->
+                                        <img th:src="|/images/${file.fileNo}|" height="150">
+                                        <p th:text="${file.fileOrgName}"></p>
+                                    </a>
+                                </div>
+                                <th:block th:if="${info.userId == userVo.userId}">
+                                <button type="button" id="updateBoardBtn" class="btn btn-success">수정</button>
+                                </th:block>
+                                <th:block th:unless="${info.userId == userVo.userId}">
+                                </th:block>
+                                <a th:href="@{/}" class="btn btn-info">목록</a>
+                            </form>
+                        </div>
+
+                        <!-- 댓글 시작 -->
+                        <section class="mb-5">
+                            <th:block th:if="${session.id != null}">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <!-- Comment form-->
+                                    <form id="replyFrm" class="mb-4" method="post">
+                                        <input type="hidden" name="boardNo" id="boardNo" th:value="${boardNo}">
+                                        <input type="hidden" name="userId" id="userId" th:value="${session.id}">
+                                        <textarea class="form-control" id="replyContent" name="replyContent" rows="3" placeholder="댓글을 작성 해주세요."></textarea>
+                                        <button type="button" id="replySave" class="btn btn-dark">저장</button>
+                                    <!-- Comment with nested comments-->
+                                    <div class="d-flex mb-4" th:each="list : ${replyList}">
+                                        <!-- Parent comment-->
+                                        <div class="flex-shrink-0"><img class="rounded-circle" src="https://dummyimage.com/50x50/ced4da/6c757d.jpg" alt="..." /></div>
+                                        <div class="ms-3">
+                                            <div class="fw-bold" th:text="${list.userId}"></div>
+                                            <th:block th:if="${session.id == list.userId}">
+                                                <input type="hidden" name="replyNo" th:value="${list.replyNo}">
+                                                <input type="text" class="replyContentArea" th:value="${list.replyContent}" readonly />
+                                                <a href="#" th:onclick="'javascript:updateReplyModalForm('+${list.replyNo}+')'" class="btn btn-info updateReply">수정</a>
+                                                <a href="#" th:onclick="'javascript:delReply('+${list.replyNo}+')'" class="btn btn-danger delReply">삭제</a>
+
+                                            <!--modal-->
+                                            <div class="modal fade" id="updateReplyModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                  <div class="modal-content">
+                                                    <div class="modal-header">
+                                                      <h1 class="modal-title fs-5" id="exampleModalLabel">댓글 수정</h1>
+                                                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                       <div class="col-md-4">
+                                                           <input type="hidden" id="modalReplyNo" value="">
+                                                          <textarea class="form-control" id="modalReplyContent" rows="3" placeholder="댓글을 작성 해주세요."></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                      <button type="button" class="btn btn-primary" id="modalReplyUpdate" >저장</button>
+                                                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                            </div>
+                                            <!--modal 종료-->
+                                            </th:block>
+                                            <th:block th:unless="${session.id == list.userId}">
+                                                <input type="text" th:value="${list.replyContent}" readonly/>
+                                            </th:block>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            </th:block>
+                           </form>
+                        </section>
+                        <!-- 댓글 종료 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    </th:block>
+
+</div>
+
+<script layout:fragment="script" th:inline="javascript" type="text/javascript">
+    const boardNo = $("#boardNo").val();
+
+    $(document).ready(function () {
+            // 댓글 수정 a 태그 기본 동작 방지
+            $(".updateReply").on("click", function (e) {
+                e.preventDefault();
+            });
+            // 댓글 삭제 a 태그 기본 동작 방지
+            $(".delReply").on("click", function (e) {
+                e.preventDefault();
+            });
+            //댓글 저장
+            $("#replySave").on("click", function () {
+
+                $.ajax({
+                url : '/reply/reg/' + boardNo,
+                type : 'post',
+                dataType : 'json',
+                data : $("#replyFrm").serialize(),
+                ansync: false,
+                success: function (replyNo) {
+                    alert(replyNo +  "번 댓글이 저장되었습니다.");
+                    $("#content").val('');
+                    location.reload();
+                },
+                error: function (request, status, error) {
+                    console.log(error);
+                }
+            });
+        });
+
+        //모달창 댓글 수정
+        $("#modalReplyUpdate").on("click", function () {
+
+            const replyContent = $("#modalReplyContent").val();
+            const replyNo = $("#modalReplyNo").val();
+            const params = {replyContent : replyContent, replyNo : replyNo}
+            $.ajax({
+                url : '/reply/modify/' + boardNo,
+                type : 'post',
+                dataType : 'json',
+                data : params,
+                ansync: false,
+                success: function (replyNo) {
+                    alert(replyNo +  "번 댓글이 수정되었습니다.");
+                    location.reload();
+                },
+                error: function (request, status, error) {
+                    console.log(error);
+                }
+            });
+        });
+    });
+
+    //댓글 수정 modal 표시
+    function updateReplyModalForm(replyNum) {
+
+            const params = {replyNo : replyNum}
+
+            $.ajax({
+            url : '/reply/detail/' + boardNo,
+            type : 'get',
+            dataType : 'json',
+            data : params,
+            ansync: false,
+            success: function (result) {
+                $("#modalReplyContent").val(result.replyContent);
+                $("#modalReplyNo").val(result.replyNo);
+                console.log(result);
+            },
+            error: function (request, status, error) {
+                console.log(error);
+            }
+        });
+        $("#updateReplyModal").modal("show");
+    }
+
+    //댓글 삭제
+    function delReply(replyNum) {
+        if (!confirm("정말 삭제할거야? 복구 못하는데?")) {
+            return;
+        } else {
+            const params = {replyNo : replyNum};
+
+                $.ajax({
+                url : '/reply/del/' + boardNo,
+                type : 'post',
+                dataType : 'json',
+                data : params,
+                ansync: false,
+                success: function (result) {
+                    if (result === 1) {
+                        alert("삭제되었습니다.");
+                        getReplyList();
+                    }
+                },
+                error: function (request, status, error) {
+                    console.log(error);
+                }
+            });
+        }
+    }
+
+    //댓글 목록 조회
+    function getReplyList() {
+        $.ajax({
+                url : '/reply/list/' + boardNo,
+                type : 'get',
+                dataType : 'json',
+                ansync: false,
+                success: function (result) {
+                    console.log("success ~!");
+                    console.log(result);
+                    $(".replyContentArea").val(result.replyContent);
+                },
+                error: function (request, status, error) {
+                    console.log(error);
+                }
+            });
+    }
+
+    //게시글 작성(submit)
+    $("#regBtn").on("click", function () {
+        if (!confirm("게시글 등록 할거야(submit)?")) {
+            return;
+        } else {
+            $("#regFrm").submit();
+        }
+    });
+
+    //게시글 작성(ajax)
+    $("#regAjax").on("click", function () {
+        if (!confirm("게시글 등록 할거야(ajax)?")) {
+            return;
+
+        } else {
+            const frm = $("#regFrm")[0];
+            const formData = new FormData(frm);
+
+            let inputFile = $("#files");
+
+            const params = {
+                title: $("#title").val(),
+                content : $("#content").val()
+            };
+
+            //파일
+            formData.append("files", inputFile);
+            //vo
+            formData.append("boardVo", new Blob([JSON.stringify(params)], {type: "application/json"}));
+
+            $.ajax({
+                url : '/regAjax',
+                type : 'post',
+                processData: false,
+                contentType: false,
+                enctype: "multipart/form-data",
+                data: formData,
+                success: function (result) {
+                    alert(result + "번 게시글이 등록되었단다.");
+                    location.href = "/";
+                },
+                error: function (request, status, error) {
+                    alert("게시글 등록에 실패했다.");
+                    location.href = "/";
+                    console.log(error);
+                }
+                });
+            }
+    });
+
+    //게시글 수정(ajax)
+    $("#updateBoardBtn").on("click", function () {
+        if (!confirm("게시글 수정 할거야?")) {
+            return;
+        } else {
+            $.ajax({
+                url : '/modifyAjax',
+                type : 'post',
+                dataType : 'json',
+                data: $("#updateFrm").serialize(),
+                ansync: false,
+                success: function (result) {
+                    if (result === 1) {
+                        alert("수정되었단다.");
+                        location.href = "/";
+                    }
+                },
+                error: function (request, status, error) {
+                    console.log(error);
+                }
+            });
+        }
+    });
+</script>
+
+</html>

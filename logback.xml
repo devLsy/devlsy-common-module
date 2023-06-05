@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+
+    <property name="LOG_DIR" value="D:/applog/th-board2" />
+    <property name="LOG_FILE_NAME" value="th-board2" />
+    <property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) %magenta(%-4relative) --- %green([%thread{10}]) %cyan(%logger{20}) : %msg%n" />
+
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="console-sql" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+<!--    <appender name="file" class="ch.qos.logback.core.FileAppender">-->
+<!--        <file>${LOG_DIR}/${LOG_FILE_NAME}.log</file>-->
+<!--        <encoder>-->
+<!--            <pattern>${LOG_PATTERN}</pattern>-->
+<!--        </encoder>-->
+<!--    </appender>-->
+
+    <logger name="jdbc" level="OFF"/>
+    <!-- sqlonly 레벨 수정-->
+    <logger name="jdbc.sqlonly" level="DEBUG"/>
+    <logger name="jdbc.sqltiming" level="OFF"/>
+    <logger name="jdbc.audit" level="OFF"/>
+    <logger name="jdbc.resultset" level="OFF"/>
+    <!-- 쿼리 결과를 테이블 형식으로 볼려면 resultsettable 레벨 수정 -->
+    <logger name="jdbc.resultsettable" level="DEBUG"/>
+    <logger name="jdbc.connection" level="OFF"/>
+
+    <root level="INFO">
+        <appender-ref ref="console" />
+<!--        <appender-ref ref="file" />-->
+    </root>
+</configuration>
