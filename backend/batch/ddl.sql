@@ -1,3 +1,5 @@
+--oracle version
+
 BATCH_JOB_INSTANCE definition
 
 CREATE TABLE "BATCH_JOB_INSTANCE" 
