@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+    <html xmlns:th="http://www.thymeleaf.org"
+          xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+          layout:decorate="~{layout/default.html}">
+
+    <th:block layout:fragment="content">
+        <div class="contents">
+
+            <!-- 메뉴 -->
+            <h2 class="tit">연차정보</h2>
+            <div class="location">
+                <ul>
+                    <li><a href="/"><span class="material-icons">home</span></a></li>
+                    <li>RENOSOFT관리</li>
+                    <li>연차정보</li>
+                </ul>
+            </div>
+
+            <!-- 검색 -->
+            <div class="section">
+
+                    <!-- HEAD -->
+                    <p class="section-tit">검색</p>
+
+                    <!-- BODY -->
+                    <form id="searchForm" action="" th:object="${annualVo}" method="get">
+                        <div class="search-box">
+
+                        <!-- 검색조건 -->
+                        <ul>
+                            <li>
+                                <label>사원명</label>
+                                <input type="text" class="input-default" th:field="*{empNm}" name="empNm"/>
+                            </li>
+                            <li>
+                                <label>상태</label>
+                                <div class="input-select">
+                                    <select class="input-default" th:field="*{cfrmCompGbCd}" name="apprCompGbCd">
+                                        <option value="">전체</option>
+                                        <option th:each="list : ${ap}" th:value="${list.dtlCd}" th:utext="${list.dtlCdDesc}" th:if="${list.dtlCd != 'WT' && list.dtlCd != 'RE' }"></option>
+                                    </select>
+                                </div>
+                            </li>
+                            <li>
+                                <label>승인자</label>
+                                <div class="input-select">
+                                    <select class="input-default" name="annualApprEmpNm">
+                                        <option value="">전체</option>
+                                        <option th:each="list : ${apprList}" th:value="${list}" th:text="${list}"></option>
+                                    </select>
+                                </div>
+                            </li>
+                            <li>
+                                <label>종류</label>
+                                <div class="input-select">
+                                    <select class="input-default" th:field="*{annualGbCd}" name="annualGbCd">
+                                        <option value="">전체</option>
+                                        <option th:each="list : ${ye}" th:value="${list.dtlCd}" th:utext="${list.dtlCdDesc}"></option>
+                                    </select>
+                                </div>
+                            </li>
+                            <li class="full">
+                           <label>기간</label>
+                           <div class="form-row w100">
+                               <div class="col-10">
+                                   <div class="form-inline form-datepicker">
+                                       <input type="text" class="input-default datepicker" id="startDate" th:field="*{annualStrDt}"  name="annualStrDt" readonly style="width: 110px;">
+                                       <span class="wave">~</span>
+                                       <input type="text" class="input-default datepicker" id="endDate" th:field="*{annualEndDt}"  name="annualEndDt" readonly style="width: 110px;">
+                                   </div>
+                               </div>
+                           </div>
+                       </li>
+                        </ul>
+
+                        <!-- 버튼 -->
+                        <div class="btnArea">
+                            <button class="btn btn-normal" id="search" type="button">검색</button>
+                        </div>
+                    </div>
+                    </form>
+            </div>
+
+            <!-- 연차신청 목록 -->
+            <div class="section">
+
+                <!-- HEAD -->
+                <div class="flex-box justify">
+
+                    <!-- 제목 -->
+                    <p class="section-tit">연차신청 목록</p>
+
+                    <!-- button -->
+                    <th:block th:if="${vo.empAuthLevel=='2'}">
+                        <div class="flex-cont">
+                            <a href="#" class="btn btn-normal" id="annualEmpInfo" target="_blank">사원연차정보</a>
+                            <button onclick="openSpcForm(); return false;" class="btn btn-normal" id="regAnnualInfo">연차등록</button>
+<!--                            <a href="#" class="btn btn-gray"><span class="ico excel">excel</span></a>-->
+                        </div>
+                    </th:block>
+                </div>
+
+                <!-- BODY -->
+                <div class="scroll-x scroll-y">
+                    <div class="flex-box justify">
+                        <div class="tbl scroll-x">
+                            <table>
+                                <caption>연차신청 목록 테이블</caption>
+                                <colgroup>
+                                    <col width="50px">
+                                    <col width="7%">
+                                    <col width="11%">
+                                    <col width="8%">
+                                    <col width="8%">
+                                    <col width="8%">
+                                    <col width="8%">
+                                    <col width="8%">
+                                    <col width="8%">
+                                    <col width="8%">
+                                    <col width="11%">
+                                    <col width="*">
+                                </colgroup>
+                                <thead>
+                                    <tr>
+                                        <th scope="col">순번</th>
+                                        <th scope="col">신청자</th>
+                                        <th scope="col">사용일</th>
+                                        <th scope="col">구분</th>
+                                        <th scope="col">사용연차</th>
+                                        <th scope="col">일반연차</th>
+                                        <th scope="col">특별연차사용</th>
+                                        <th scope="col">특별연차</th>
+                                        <th scope="col">상태</th>
+                                        <th scope="col">연차승인자</th>
+                                        <th scope="col">승인/반려일</th>
+                                        <th scope="col">사유</th>
+                                    </tr>
+                                </thead>
+
+                                <!-- tbody -->
+                                <tbody class="center" id="annualBody">
+                                </tbody>
+                            </table>
+
+                            <!-- pagination -->
+                            <div class="paging tbl-paging">
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <!--//BODY end-->
+            </div>
+
+            <div class="popup" id="pop01">
+                <a href="#" class="pop-close">
+                    <span class="hidden">신청사유</span>
+                </a>
+                <div class="pop-header">
+                    신청사유
+                </div>
+                <div class="pop-body">
+                    <div class="txt-area" id="reqReason"></div>
+                    <div class="pop-btn-area">
+                        <a href="#" class="btn btn-import pop-dismiss" onclick="return false;">닫기</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 승인/반려 사유 팝업-->
+            <div class="popup" id="pop02">
+                <a href="#" class="pop-close">
+                    <span class="hidden">승인/반려사유</span>
+                </a>
+                <div class="pop-header">
+                    승인/반려사유
+                </div>
+                <div class="pop-body">
+                    <div class="txt-area" id="returnReason"></div>
+                    <div class="pop-btn-area">
+                        <a href="#" class="btn btn-gray pop-dismiss" onclick="return false;">닫기</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </th:block>
+
+    <!-- Script -->
+    <script layout:fragment="script" th:inline="javascript" type="text/javascript">
+
+        // 초기 변수
+        const defaultInput = {empNm : "", apprCompGbCd : "", annualGbCd : "", annualStrDt : "", annualEndDt : ""}
+        let searchData = defaultInput;
+
+        //리스트 호출 시 구분값
+        const menu = "annual";
+
+        $(document).ready(function () {
+            //사원연차정보 팝업
+            // TODO 팝업 호출 공통으로 빼는게 좋을 듯
+            $("#annualEmpInfo").on("click", function (e) {
+                // href="#" 비활성화
+                e.preventDefault();
+
+                // 팝업창 크기 설정
+                const width = 1400; // 팝업창 너비
+                const height = 700; // 팝업창 높이
+
+                // 듀얼 모니터 고려한 화면 중앙에 팝업창 띄우기
+                var curX = window.screenLeft; // 모니터 왼쪽 시작점
+                var curY = window.screenTop; // 모니터 위쪽 시작점
+
+                var curWidth = document.body.clientWidth; // 모니터 너비
+                var curHeight = document.body.clientHeight; // 모니터 높이
+
+                var left = curX + (curWidth / 2) - (width / 2); // 팝업창 최종 왼쪽 간격
+                var top = curY + (curHeight / 2) - (height / 2); // 팝업창 최종 위쪽 간격
+
+                var options = "width=" + width + ", height=" + height + ", left=" + left + ", top=" + top;
+
+                const popWindow = window.open("/annual/allAnnualInfoPop", "annualInfo", options);
+            });
+
+            //검색
+            $("#search").on("click", function () {
+                searchData = $('#searchForm').serialize();
+                getList(searchData, 1, menu);
+            });
+
+            //페이지 로드 시 1페이지 로드로 기본 세팅
+            getList(defaultInput, 1, menu);
+        });
+
+        // 연차 등록 팝업 호출(관리자가 사원에게 대체휴가 부여)
+        function openSpcForm(){
+
+            // 팝업창 크기 설정
+            const width = 800; // 팝업창 너비
+            const height = 600; // 팝업창 높이
+
+            // 듀얼 모니터 고려한 화면 중앙에 팝업창 띄우기
+            var curX = window.screenLeft; // 모니터 왼쪽 시작점
+            var curY = window.screenTop; // 모니터 위쪽 시작점
+
+            var curWidth = document.body.clientWidth; // 모니터 너비
+            var curHeight = document.body.clientHeight; // 모니터 높이
+
+            var left = curX + (curWidth / 2) - (width / 2); // 팝업창 최종 왼쪽 간격
+            var top = curY + (curHeight / 2) - (height / 2); // 팝업창 최종 위쪽 간격
+
+            var options = "width=" + width + ", height=" + height + ", left=" + left + ", top=" + top;
+
+            const popWindow = window.open("/annual/spcFrmPop", "openSpcForm", options);
+        }
+
+        //신청 및 승인/반려 사유 조회
+        function getReason(sno, type) {
+            $.ajax({
+                type : "get",
+                url : "/api/login/reason",
+                data : {sno: sno, gubun: type},
+                success: function (data){
+                    console.log(data);
+                    (type === "request") ? $("#reqReason").html(data.reqReason): $("#returnReason").html(data.returnReason);
+                },
+                error:function(e) {
+                    console.log(e);
+                }
+            });
+        }
+
+    </script>
+
+</html>
